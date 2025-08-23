@@ -4,12 +4,6 @@ const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
 
-// Import route modules
-const knowledgeRoutes = require('./routes/knowledge');
-const fieldBindingRoutes = require('./routes/fieldBindings');
-const codeGenerationRoutes = require('./routes/codeGeneration');
-const filesRoutes = require('./routes/files');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -18,19 +12,19 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
-// API Routes
-app.use('/api/knowledge', knowledgeRoutes);
-app.use('/api/field-bindings', fieldBindingRoutes);
-app.use('/api/generate-code', codeGenerationRoutes);
-app.use('/api/files', filesRoutes);
-
-// Health check endpoint
+// Simple health check endpoint (no Azure dependencies)
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    message: 'Basic app running - Azure services disabled for testing'
   });
+});
+
+// Simple test endpoints (no Azure dependencies)
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Test endpoint working!' });
 });
 
 // Serve static frontend files
@@ -55,4 +49,5 @@ app.listen(PORT, () => {
   console.log(`📱 Frontend: http://localhost:${PORT}`);
   console.log(`🔗 API: http://localhost:${PORT}/api`);
   console.log(`📊 Health: http://localhost:${PORT}/api/health`);
+  console.log(`⚠️  Note: Azure services are disabled for testing`);
 });
