@@ -1,0 +1,38 @@
+{
+  "name": "o9-action-button-generator",
+  "version": "1.0.0",
+  "description": "RAG-powered JavaScript code generator for o9 Action Buttons",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "npm run build:frontend",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.1",
+    "@azure/storage-blob": "^12.17.0",
+    "@azure/cosmos": "^4.0.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1",
+    "mime-types": "^2.1.35",
+    "path": "^0.12.7",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "o9",
+    "action-button",
+    "javascript-generator",
+    "rag",
+    "ai"
+  ]
+}
