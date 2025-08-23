@@ -4,9 +4,9 @@
   "description": "RAG-powered JavaScript code generator for o9 Action Buttons",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node startup.js",
     "dev": "nodemon server.js",
-    "build": "npm run build:frontend",
+    "build": "echo 'Build completed - no frontend build needed'",
     "build:frontend": "echo 'No frontend build needed'"
   },
   "dependencies": {
@@ -26,7 +26,7 @@
     "nodemon": "^3.0.1"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "keywords": [
     "o9",
@@ -35,5 +35,4 @@
     "rag",
     "ai"
   ]
-
 }
