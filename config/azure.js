@@ -46,7 +46,7 @@ class AzureOpenAIClient {
 
     const data = {
       messages,
-      max_tokens: maxTokens,
+      max_completion_tokens: maxTokens,
       temperature,
       top_p: 0.95,
       frequency_penalty: 0,
@@ -129,4 +129,5 @@ module.exports = {
   containerClient,
   AzureOpenAIClient,
   initializeAzureServices
+
 };
