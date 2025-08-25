@@ -36,7 +36,7 @@ class AzureOpenAIClient {
     this.deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME;
   }
 
-  async generateCompletion(messages, maxTokens = 4000, temperature = 0.1) {
+  async generateCompletion(messages, maxTokens = 5000) {
     const url = `${this.endpoint}/openai/deployments/${this.deploymentName}/chat/completions?api-version=${this.apiVersion}`;
     
     const headers = {
@@ -47,7 +47,6 @@ class AzureOpenAIClient {
     const data = {
       messages,
       max_completion_tokens: maxTokens,
-      temperature,
       top_p: 0.95,
       frequency_penalty: 0,
       presence_penalty: 0
@@ -131,3 +130,4 @@ module.exports = {
   initializeAzureServices
 
 };
+
