@@ -677,6 +677,10 @@
                 URL.revokeObjectURL(url);
             };
 
+            const clearGeneratedCode = () => {
+                setGeneratedCode('');
+            };
+
             return (
                 <div className="bg-white rounded-lg shadow-md p-6">
                     <h3 className="text-lg font-semibold mb-4 flex items-center">
@@ -780,18 +784,11 @@
                                     <h4 className="font-medium text-gray-700">Generated Code</h4>
                                     <div className="flex items-center space-x-2">
                                         <button
-                                            onClick={handleGenerate}
-                                            disabled={!projectName || !actionButtonType || !businessLogic || !selectedFieldBinding || isGenerating}
-                                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
+                                            onClick={clearGeneratedCode}
+                                            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center"
                                         >
-                                            {isGenerating ? (
-                                                <LoadingSpinner size="sm" text="" />
-                                            ) : (
-                                                <>
-                                                    <i className="fas fa-sync-alt mr-2"></i>
-                                                    Refresh
-                                                </>
-                                            )}
+                                            <i className="fas fa-times mr-2"></i>
+                                            Clear
                                         </button>
                                         <button
                                             onClick={downloadCode}
