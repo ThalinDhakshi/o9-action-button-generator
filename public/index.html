@@ -778,13 +778,29 @@
                             <div className="mt-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <h4 className="font-medium text-gray-700">Generated Code</h4>
-                                    <button
-                                        onClick={downloadCode}
-                                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center"
-                                    >
-                                        <i className="fas fa-download mr-2"></i>
-                                        Download
-                                    </button>
+                                    <div className="flex items-center space-x-2">
+                                        <button
+                                            onClick={handleGenerate}
+                                            disabled={!projectName || !actionButtonType || !businessLogic || !selectedFieldBinding || isGenerating}
+                                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
+                                        >
+                                            {isGenerating ? (
+                                                <LoadingSpinner size="sm" text="" />
+                                            ) : (
+                                                <>
+                                                    <i className="fas fa-sync-alt mr-2"></i>
+                                                    Refresh
+                                                </>
+                                            )}
+                                        </button>
+                                        <button
+                                            onClick={downloadCode}
+                                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center"
+                                        >
+                                            <i className="fas fa-download mr-2"></i>
+                                            Download
+                                        </button>
+                                    </div>
                                 </div>
                                 <CodeEditor
                                     value={generatedCode}
