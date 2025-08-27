@@ -35,7 +35,7 @@ const upload = multer({
 // Upload knowledge base files (JS examples, images, documentation)
 router.post('/upload', upload.array('files', 10), async (req, res) => {
   try {
-    const { category, actionButtonType, description } = req.body;
+    const { actionButtonType, description } = req.body;
     
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'No files uploaded' });
@@ -45,7 +45,7 @@ router.post('/upload', upload.array('files', 10), async (req, res) => {
 
     for (const file of req.files) {
       const fileId = uuidv4();
-      const fileName = `${category}/${fileId}-${file.originalname}`;
+      const fileName = `${actionButtonType}/${fileId}-${file.originalname}`;
       
       // Upload to Azure Blob Storage
       const blockBlobClient = containerClient.getBlockBlobClient(fileName);
@@ -57,7 +57,6 @@ router.post('/upload', upload.array('files', 10), async (req, res) => {
       const knowledgeItem = {
         id: fileId,
         type: 'knowledge',
-        category: category,
         actionButtonType: actionButtonType,
         fileName: file.originalname,
         filePath: fileName,
@@ -86,15 +85,10 @@ router.post('/upload', upload.array('files', 10), async (req, res) => {
 // Get all knowledge base items
 router.get('/', async (req, res) => {
   try {
-    const { category, actionButtonType } = req.query;
+    const { actionButtonType } = req.query;
     
     let query = 'SELECT * FROM c WHERE c.type = "knowledge"';
     const parameters = [];
-
-    if (category) {
-      query += ' AND c.category = @category';
-      parameters.push({ name: '@category', value: category });
-    }
 
     if (actionButtonType) {
       query += ' AND c.actionButtonType = @actionButtonType';
@@ -175,7 +169,7 @@ router.get('/:id/content', async (req, res) => {
 // Search knowledge base
 router.post('/search', async (req, res) => {
   try {
-    const { searchQuery, category, actionButtonType } = req.body;
+    const { searchQuery, actionButtonType } = req.body;
     
     let query = 'SELECT * FROM c WHERE c.type = "knowledge"';
     const parameters = [];
@@ -183,11 +177,6 @@ router.post('/search', async (req, res) => {
     if (searchQuery) {
       query += ' AND (CONTAINS(LOWER(c.fileName), LOWER(@searchQuery)) OR CONTAINS(LOWER(c.description), LOWER(@searchQuery)))';
       parameters.push({ name: '@searchQuery', value: searchQuery });
-    }
-
-    if (category) {
-      query += ' AND c.category = @category';
-      parameters.push({ name: '@category', value: category });
     }
 
     if (actionButtonType) {
@@ -242,13 +231,12 @@ router.get('/stats/overview', async (req, res) => {
   try {
     const query = `
       SELECT 
-        c.category,
         c.actionButtonType,
         COUNT(1) as count,
         SUM(c.fileSize) as totalSize
       FROM c 
       WHERE c.type = "knowledge"
-      GROUP BY c.category, c.actionButtonType
+      GROUP BY c.actionButtonType
     `;
 
     const { resources } = await containers.knowledgeBase.items.query(query).fetchAll();
@@ -256,7 +244,7 @@ router.get('/stats/overview', async (req, res) => {
     const stats = {
       totalFiles: resources.reduce((sum, item) => sum + item.count, 0),
       totalSize: resources.reduce((sum, item) => sum + item.totalSize, 0),
-      categories: resources
+      actionButtonTypes: resources
     };
 
     res.json(stats);
