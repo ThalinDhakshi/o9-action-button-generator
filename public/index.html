@@ -598,7 +598,6 @@
             const [businessLogic, setBusinessLogic] = useState('');
             const [fieldBindings, setFieldBindings] = useState([]);
             const [selectedFieldBinding, setSelectedFieldBinding] = useState('');
-            const [additionalRequirements, setAdditionalRequirements] = useState('');
             const [isGenerating, setIsGenerating] = useState(false);
             const [generatedCode, setGeneratedCode] = useState('');
 
@@ -626,8 +625,7 @@
                         projectName,
                         actionButtonType,
                         businessLogic,
-                        fieldBindingId: selectedFieldBinding,
-                        additionalRequirements
+                        fieldBindingId: selectedFieldBinding
                     });
                     
                     setGeneratedCode(result.generatedCode);
@@ -723,18 +721,6 @@
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Additional Requirements (Optional)
-                            </label>
-                            <textarea
-                                value={additionalRequirements}
-                                onChange={(e) => setAdditionalRequirements(e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                rows="2"
-                                placeholder="Any special requirements or constraints..."
-                            />
-                        </div>
 
                         <button
                             onClick={handleGenerate}
