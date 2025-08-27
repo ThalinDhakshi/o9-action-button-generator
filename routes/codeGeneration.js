@@ -14,8 +14,7 @@ router.post('/', async (req, res) => {
       projectName,
       actionButtonType,
       businessLogic,
-      fieldBindingId,
-      additionalRequirements
+      fieldBindingId
     } = req.body;
 
     // Validate required fields
@@ -111,8 +110,7 @@ router.post('/', async (req, res) => {
       actionButtonType,
       businessLogic,
       fieldBinding,
-      exampleCodes,
-      additionalRequirements
+      exampleCodes
     );
 
     console.log('✅ Code generated successfully');
@@ -130,7 +128,6 @@ router.post('/', async (req, res) => {
       fieldBinding,
       generatedCode,
       examples: exampleCodes.map(ex => ({ fileName: ex.fileName, description: ex.description })),
-      additionalRequirements,
       generatedAt: new Date().toISOString(),
       version: '1.0.0',
       status: 'generated'
@@ -228,8 +225,7 @@ router.post('/:id/regenerate', async (req, res) => {
       existingCode.actionButtonType,
       modifiedBusinessLogic,
       existingCode.fieldBinding,
-      [], // Use cached examples
-      existingCode.additionalRequirements
+      [] // Use cached examples
     );
 
     // Update existing record
@@ -320,7 +316,7 @@ router.get('/history/all', async (req, res) => {
 });
 
 // Helper function to generate JavaScript code using Azure OpenAI
-async function generateActionButtonCode(projectName, actionButtonType, businessLogic, fieldBinding, examples, additionalRequirements) {
+async function generateActionButtonCode(projectName, actionButtonType, businessLogic, fieldBinding, examples) {
   const systemPrompt = `You are an expert o9 supply chain platform JavaScript developer. You specialize in generating Action Button JavaScript modules following EXACT syntax patterns.
 
 CRITICAL REQUIREMENTS:
@@ -372,7 +368,6 @@ BUSINESS LOGIC: ${businessLogic}
 FIELD BINDINGS:
 ${JSON.stringify(fieldBinding.fields, null, 2)}
 
-${additionalRequirements ? `ADDITIONAL REQUIREMENTS: ${additionalRequirements}` : ''}
 
 ${examples.length > 0 ? `REFERENCE EXAMPLES:\n${examples.map(ex => `--- ${ex.fileName} ---\n${ex.content}`).join('\n\n')}` : ''}
 
