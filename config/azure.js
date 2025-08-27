@@ -14,8 +14,7 @@ const database = cosmosClient.database(process.env.COSMOS_DATABASE_NAME);
 const containers = {
   knowledgeBase: database.container('knowledgeBase'),
   fieldBindings: database.container('fieldBindings'),
-  generatedCode: database.container('generatedCode'),
-  examples: database.container('examples')
+  generatedCode: database.container('generatedCode')
 };
 
 // Blob Storage Client
@@ -96,8 +95,7 @@ async function initializeAzureServices() {
     const containerConfigs = [
       { id: 'knowledgeBase', partitionKey: '/type' },
       { id: 'fieldBindings', partitionKey: '/actionButtonType' },
-      { id: 'generatedCode', partitionKey: '/projectId' },
-      { id: 'examples', partitionKey: '/category' }
+      { id: 'generatedCode', partitionKey: '/projectId' }
     ];
 
     for (const config of containerConfigs) {
