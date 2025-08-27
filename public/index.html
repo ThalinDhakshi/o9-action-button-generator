@@ -76,7 +76,7 @@
             uploadKnowledge: async (files, category, actionButtonType, description) => {
                 const formData = new FormData();
                 files.forEach(file => formData.append('files', file));
-                formData.append('category', category);
+                if (category) formData.append('category', category);
                 formData.append('actionButtonType', actionButtonType);
                 formData.append('description', description);
                 
@@ -248,17 +248,9 @@
         // Knowledge Base Upload Component
         function KnowledgeUpload({ onUploadSuccess }) {
             const [files, setFiles] = useState([]);
-            const [category, setCategory] = useState('');
             const [actionButtonType, setActionButtonType] = useState('');
             const [description, setDescription] = useState('');
             const [isUploading, setIsUploading] = useState(false);
-
-            const categories = [
-                'Mass Edit-Add Action Buttons',
-                'Mass Delete Action Buttons',
-                'Checkbox Edit-Add Action Buttons',
-                'Checkbox Delete Action Buttons'
-            ];
 
             const actionButtonTypes = [
                 'Mass Edit/Add',
@@ -272,18 +264,17 @@
             };
 
             const handleUpload = async () => {
-                if (files.length === 0 || !category || !actionButtonType) {
+                if (files.length === 0 || !actionButtonType) {
                     return;
                 }
 
                 setIsUploading(true);
                 try {
-                    const result = await api.uploadKnowledge(files, category, actionButtonType, description);
+                    const result = await api.uploadKnowledge(files, null, actionButtonType, description);
                     onUploadSuccess(result);
                     
                     // Reset form
                     setFiles([]);
-                    setCategory('');
                     setActionButtonType('');
                     setDescription('');
                     document.querySelector('input[type="file"]').value = '';
@@ -321,38 +312,20 @@
                             )}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Category
-                                </label>
-                                <select
-                                    value={category}
-                                    onChange={(e) => setCategory(e.target.value)}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="">Select Category</option>
-                                    {categories.map(cat => (
-                                        <option key={cat} value={cat}>{cat}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Action Button Type
-                                </label>
-                                <select
-                                    value={actionButtonType}
-                                    onChange={(e) => setActionButtonType(e.target.value)}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="">Select Type</option>
-                                    {actionButtonTypes.map(type => (
-                                        <option key={type} value={type}>{type}</option>
-                                    ))}
-                                </select>
-                            </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Action Button Type
+                            </label>
+                            <select
+                                value={actionButtonType}
+                                onChange={(e) => setActionButtonType(e.target.value)}
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">Select Type</option>
+                                {actionButtonTypes.map(type => (
+                                    <option key={type} value={type}>{type}</option>
+                                ))}
+                            </select>
                         </div>
 
                         <div>
@@ -370,7 +343,7 @@
 
                         <button
                             onClick={handleUpload}
-                            disabled={!files.length || !category || !actionButtonType || isUploading}
+                            disabled={!files.length || !actionButtonType || isUploading}
                             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                             {isUploading ? (
