@@ -51,13 +51,6 @@ router.post('/', async (req, res) => {
 
     console.log('🔍 Searching knowledge base for examples...');
     
-    // DEBUG: Check what's actually in knowledge base
-    console.log('🔍 DEBUG: Checking knowledge base contents...');
-    const debugQuery = `SELECT c.id, c.actionButtonType, c.fileType, c.fileName FROM c WHERE c.type = "knowledge"`;
-    const { resources: allKnowledge } = await containers.knowledgeBase.items.query(debugQuery).fetchAll();
-    console.log('📊 All knowledge entries:', JSON.stringify(allKnowledge, null, 2));
-    console.log('🎯 Looking for actionButtonType:', actionButtonType);
-    
     // Get relevant knowledge base examples
     let examples = [];
     let exampleCodes = [];
@@ -67,7 +60,7 @@ router.post('/', async (req, res) => {
         SELECT * FROM c 
         WHERE c.type = "knowledge" 
         AND c.actionButtonType = @actionButtonType 
-        AND c.fileType = "application/javascript"
+        AND (c.fileType = "application/javascript" OR c.fileType = "text/javascript")
         ORDER BY c.uploadedAt DESC
       `;
 
