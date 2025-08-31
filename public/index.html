@@ -137,6 +137,22 @@
                 return response.json();
             },
             
+            updateFieldBinding: async (id, data) => {
+                const response = await fetch(`${API_BASE}/field-bindings/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                return response.json();
+            },
+            
+            deleteFieldBinding: async (id, actionButtonType) => {
+                const response = await fetch(`${API_BASE}/field-bindings/${id}?actionButtonType=${encodeURIComponent(actionButtonType)}`, {
+                    method: 'DELETE'
+                });
+                return response.json();
+            },
+            
             // Code Generation
             generateCode: async (data) => {
                 const response = await fetch(`${API_BASE}/generate-code`, {
@@ -384,29 +400,37 @@
             };
 
             const handleDeleteBinding = async (bindingId) => {
-                if (confirm('Are you sure you want to delete this field binding?')) {
+                const binding = fieldBindings.find(fb => fb.id === bindingId);
+                if (!binding) return;
+                
+                if (confirm(`Are you sure you want to delete the field binding "${binding.name}"? This action cannot be undone.`)) {
                     try {
-                        // TODO: Implement delete API call
-                        console.log('Delete binding:', bindingId);
+                        await api.deleteFieldBinding(bindingId, binding.actionButtonType);
                         onDelete && onDelete(bindingId);
-                        loadFieldBindings();
+                        loadFieldBindings(); // Refresh the list
                     } catch (error) {
                         console.error('Failed to delete binding:', error);
+                        alert('Failed to delete field binding. Please try again.');
                     }
                 }
             };
 
             const handleDeleteField = async (bindingId, fieldIndex) => {
-                if (confirm('Are you sure you want to delete this field?')) {
+                const binding = fieldBindings.find(fb => fb.id === bindingId);
+                if (!binding) return;
+                
+                const fieldToDelete = binding.fields[fieldIndex];
+                if (confirm(`Are you sure you want to delete the field "${fieldToDelete.name}"? This action cannot be undone.`)) {
                     try {
-                        const binding = fieldBindings.find(fb => fb.id === bindingId);
                         const updatedFields = binding.fields.filter((_, index) => index !== fieldIndex);
-                        // TODO: Implement update API call
-                        console.log('Update binding fields:', bindingId, updatedFields);
-                        onUpdate && onUpdate(bindingId, { ...binding, fields: updatedFields });
-                        loadFieldBindings();
+                        const updatedBinding = { ...binding, fields: updatedFields };
+                        
+                        await api.updateFieldBinding(bindingId, updatedBinding);
+                        onUpdate && onUpdate(bindingId, updatedBinding);
+                        loadFieldBindings(); // Refresh the list
                     } catch (error) {
                         console.error('Failed to delete field:', error);
+                        alert('Failed to delete field. Please try again.');
                     }
                 }
             };
@@ -739,17 +763,15 @@
         }
 
         // Field Binding Manager Component (Main component with tabs)
-        function FieldBindingManager({ onSave }) {
+        function FieldBindingManager({ onSave, onNotification }) {
             const [activeTab, setActiveTab] = useState('create');
 
             const handleFieldBindingUpdate = (bindingId, updatedBinding) => {
-                console.log('Field binding updated:', bindingId, updatedBinding);
-                // This will be handled by backend integration later
+                onNotification && onNotification('Field binding updated successfully', 'success');
             };
 
             const handleFieldBindingDelete = (bindingId) => {
-                console.log('Field binding deleted:', bindingId);
-                // This will be handled by backend integration later
+                onNotification && onNotification('Field binding deleted successfully', 'success');
             };
 
             return (
@@ -1057,7 +1079,10 @@
 
                         {activeTab === 'fieldbindings' && (
                             <div className="max-w-6xl mx-auto">
-                                <FieldBindingManager onSave={handleFieldBindingSave} />
+                                <FieldBindingManager 
+                                    onSave={handleFieldBindingSave} 
+                                    onNotification={addNotification} 
+                                />
                             </div>
                         )}
 
